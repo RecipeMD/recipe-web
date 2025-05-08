@@ -133,6 +133,9 @@
     & li + li {
         margin-top: 8px;
     }
+    & p {
+        margin: .5em 0;
+    }
 }
 
 .github {

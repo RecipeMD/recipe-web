@@ -2,9 +2,11 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+  repository_dispatch:
+    types: [trigger-deploy]
   workflow_dispatch:
 
 permissions:
@@ -24,7 +26,6 @@ jobs:
       matrix:
         node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-    
 
     steps:
       - uses: actions/checkout@v4

@@ -3,8 +3,9 @@
   text-decoration: none;
   flex-shrink: 0;
   padding: 11px 10px;
-  border: 1px solid var(--black);
+  border: var(--border-width) solid var(--text);
   border-radius: 6px;
+  background: var(--base-elevation-2);
 }
 .title {
   font-size: var(--font-h1);
@@ -41,7 +42,7 @@
 .footer {
   margin: 20px;
   text-align: center;
-  color: var(--gray);
+  color: var(--accent);
 }
 
 @media (width < 560px) {

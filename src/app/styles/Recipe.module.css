@@ -11,7 +11,7 @@
     max-width: 50%;
     max-height: 300px;
     border-radius: 16px;
-    border: 1px solid var(--black);
+    border: var(--border-width) solid var(--text);
 }
 
 .tags {
@@ -55,7 +55,7 @@
 .author {
     margin-bottom: 8px;
     font-weight: 700;
-    color: var(--gray);
+    color: var(--accent);
 }
 
 .yields {
@@ -66,31 +66,31 @@
 }
 
 .yields-btn {
-    background: var(--black);
+    background: var(--text);
     border-radius: 50%;
     width: 34px;
     height: 34px;
     border: none;
     padding: 0;
-    color: var(--light-gray);
+    color: var(--base);
     display: inline flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
 
     &:focus-visible {
-        background: var(--gray);
+        background: var(--accent);
     }
 
     &:active {
-        background: var(--black);
-        color: var(--gray);
+        background: var(--text);
+        color: var(--accent);
     }
 }
 
 @media (hover: hover) {
     .yields-btn:hover {
-        background: var(--gray);
+        background: var(--accent);
     }
 }
 
@@ -102,7 +102,7 @@
     width: 60px;
     -moz-appearance: textfield;
     appearance: textfield;
-    border: 1px solid var(--black);
+    border: var(--border-width) solid var(--text);
     border-radius: 6px;
 
     &::-webkit-inner-spin-button, &::-webkit-outer-spin-button {
@@ -119,8 +119,9 @@
 
 .ingredients {
     padding: 16px;
-    border: 1px solid var(--black);
+    border: var(--border-width) solid var(--text);
     border-radius: 16px;
+    background: var(--base-elevation-1);
 }
 
 .instructions-container {

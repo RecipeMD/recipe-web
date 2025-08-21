@@ -15,11 +15,11 @@
     flex-direction: column;
     justify-content: space-between;
 
-    background: white;
+    background: var(--base-elevation-1);
     border: none;
     border-radius: var(--radius);
-    border: 1px solid var(--black);
-    outline: 0px solid var(--black);
+    border: var(--border-width) solid var(--text);
+    outline: 0px solid var(--text);
     overflow: hidden;
 
     text-decoration: none;
@@ -58,19 +58,19 @@
     top: 0;
     padding-inline: 10px;
     height: 40px;
-    background: white;
+    background: var(--base-elevation-2);
     display: flex;
     align-items: center;
     justify-content: center;
 
     border-bottom-left-radius: var(--radius);
-    border-left: 1px solid var(--black);
-    border-bottom: 1px solid var(--black);
+    border-left: var(--border-width) solid var(--text);
+    border-bottom: var(--border-width) solid var(--text);
     opacity: 0;
     transition: opacity 300ms;
 
     font-weight: 700;
-    color: var(--gray);
+    color: var(--accent);
     padding-bottom: 3px;
 }
 
@@ -92,7 +92,7 @@
     & svg {
         width: 60px;
         height: 60px;
-        color: var(--gray);
+        color: var(--accent);
     }
 }
 

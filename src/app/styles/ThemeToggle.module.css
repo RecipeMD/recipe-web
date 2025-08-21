@@ -1,0 +1,16 @@
+.button {
+    background: none;
+    border: none;
+}
+
+.moon {
+
+}
+
+[data-theme="dark"] .moon {
+    display: none;
+}
+
+[data-theme="light"] .sun {
+    display: none;
+}

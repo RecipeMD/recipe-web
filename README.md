@@ -30,7 +30,7 @@ You can create a workflow in your recipe repo that updates the content of recipe
 
 Note that this setup only works for reacting to changes from recipe repos you have write access to.
 
-1. [Create a new access token.](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens?utm_source=chatgpt.com#creating-a-fine-grained-personal-access-token)
+1. [Create a new access token.](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token)
    - **Repository Access**: Choose "Only select repositories" and select your recipe-web repo
    - **Permissions**:
      - "Metadata" (read)
@@ -42,23 +42,22 @@ Note that this setup only works for reacting to changes from recipe repos you ha
    ```yml
    name: Trigger Frontend Deploy
 
-    on:
-    push:
-        branches:
-        - master
-        - main
+   on:
+     push:
+       branches:
+         - master
 
-    jobs:
-    dispatch:
-        runs-on: ubuntu-latest
+   jobs:
+     dispatch:
+       runs-on: ubuntu-latest
 
-        steps:
-        - name: Send repository_dispatch event to Frontend-Repo
-            uses: peter-evans/repository-dispatch@v3
-            with:
-            token: ${{ secrets.FRONTEND_TRIGGER_TOKEN }}
-            repository: username/recipe-web # Your recipe-web repo
-            event-type: trigger-deploy
+       steps:
+         - name: Send repository_dispatch event to Frontend-Repo
+           uses: peter-evans/repository-dispatch@v3
+           with:
+             token: ${{ secrets.FRONTEND_TRIGGER_TOKEN }}
+             repository: username/recipe-web # Your recipe-web repo
+             event-type: trigger-deploy
    ```
 
 That's it! You can test the connection by manually triggering a run of the workflow in your recipes repo, and then check if a corresponding run is triggered in your recipe-web repo.

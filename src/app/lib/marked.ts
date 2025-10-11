@@ -111,8 +111,9 @@ function multiplyAmount(amount: string, multiplier: number): string {
 
   function calc(input: string): string {
     try {
-      const isFrac = input.includes("/");
-      const product = new Fraction(input).mul(multiplier);
+      const approximateThirds = input.replace(/.33$/, '.333333').replace(/.66$/, '.66667').replace(/.67$/, '.66667');
+      const isFrac = approximateThirds.includes("/");
+      const product = new Fraction(approximateThirds).mul(multiplier);
       const decimals = "" + parseFloat(product.valueOf().toFixed(2));
       return isFrac ? product.toFraction() : (isComma ? decimals.replace(".", ",") : decimals);
     } catch {

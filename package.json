@@ -19,6 +19,7 @@
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-tiny-popover": "^8.1.6",
     "zod": "^3.24.2"
   },
   "devDependencies": {

@@ -125,10 +125,38 @@
     padding: 16px;
     border: 1px solid var(--black);
     border-radius: 16px;
+    line-height: 1.5em;
+    display: flex;
+    flex-direction: column;
 }
 
 .ingredients li:not(:first-child) {
     margin-top: 0.25em;
+}
+
+.ingredients ul {
+    padding-left: 1.5em;
+}
+.ingredients li {
+    position: relative;
+}
+.ingredients input {
+    display: none;
+}
+
+@media screen {
+    .ingredients-shop li {
+        position: relative;
+    }
+    .ingredients-shop li::marker {
+        color: transparent;
+    }
+    .ingredients-shop input {
+        display: block;
+        position: absolute;
+        right: calc(100% + 0.35em);
+        height: 1.5em; /* = line-height */
+    }
 }
 
 .instructions-container {
@@ -154,10 +182,31 @@
     }
 }
 
-@media print {
-    .homebutton {
-        display: none;
-    }
+.shop-button {
+    padding: 9px 8px;
+    background-color: var(--light-gray);
+    border: 1px solid var(--black);
+    border-radius: 6px;
+    transition: .3s transform;
+    margin-top: 10px;
+    margin-inline: auto;
+}
+
+.shop-button:hover {
+    transform: scale(1.15) rotate(var(--rotate, 2deg));
+}
+
+.shop-button svg {
+    width: 22px;
+    height: 20px;
+}
+
+.copied {
+    padding: 10px;
+    border-radius: 16px;
+    background: var(--black);
+    color: var(--light-gray);
+    font-weight: 500;
 }
 
 @media (width <= 768px) {

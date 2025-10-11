@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { FormEvent } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import Fraction from 'fraction.js';
 import styles from '@/app/styles/Recipe.module.css'
@@ -12,9 +12,12 @@ import MinusSVG from '@/app/svg/fontawesome/minus';
 import PlusSVG from '@/app/svg/fontawesome/plus';
 import GithubSVG from '@/app/svg/github';
 import HeartSVG from '../svg/fontawesome/heart';
+import BasketSVG from '../svg/fontawesome/basket';
 import Flag from '@/app/svg/Flag';
 import { useSearchParams, usePathname } from 'next/navigation';
 import { useFavorite } from '../lib/useFavorite';
+import CopySVG from '../svg/fontawesome/copy';
+import { Popover } from 'react-tiny-popover';
 
 type Props = {
   recipe: RecipeType;
@@ -37,6 +40,8 @@ export default function Recipe({recipe}: Props) {
   const queryMultiplier = searchParams.get("m");
   const pathName = usePathname();
 
+  const [shopMode, setShopMode] = useState(false);
+  const [isCopied, setCopied] = useState(false);
   const [multiplier, setMultiplier] = useState(queryMultiplier ? parseFloat(queryMultiplier) : 1);
   const [multiplierStr, setMultiplierStr] = useState("" + multiplier);
   const baseYields = useMemo(() => splitAmountList(recipe.yields).map(splitAmount), [recipe]);
@@ -82,6 +87,24 @@ export default function Recipe({recipe}: Props) {
       return adjustMultiplier(`${multiplier / 2}`);
     }
     return adjustMultiplier(`${multiplier - 1 / divisor}`);
+  }
+
+  function shop(event: FormEvent) {
+    event.preventDefault();
+    if (shopMode) {
+      // copy to clipboard
+      if (!(event.target instanceof HTMLFormElement)) {
+        console.log('form type mismatch');
+        return;
+      }
+      const formData = new FormData(event.target);
+      navigator.clipboard.writeText(Object.keys(Object.fromEntries(formData.entries())).join('\n'));
+      setShopMode(false);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } else {
+      setShopMode(true);
+    }
   }
 
   return (
@@ -143,7 +166,20 @@ export default function Recipe({recipe}: Props) {
                   </div>
                 )}
               </div>
-              <div className={styles.ingredients} dangerouslySetInnerHTML={{__html: ingredients}}></div>
+              <form className={styles.ingredients} onSubmit={shop}>
+                <div className={shopMode ? styles['ingredients-shop'] : undefined} dangerouslySetInnerHTML={{__html: ingredients}}></div>
+                <Popover
+                  isOpen={isCopied}
+                  content={<div className={styles.copied}>Copied!</div>}
+                  positions={['right', 'top', 'bottom', 'left']}
+                  padding={10}
+                  onClickOutside={() => setCopied(false)}>
+                  <button type="submit" className={styles['shop-button']}>
+                    {shopMode ? <CopySVG /> : <BasketSVG />}
+                  </button>
+                </Popover>
+
+              </form>
             </div>
             <div className={styles.instructions} dangerouslySetInnerHTML={{__html: instructions}}></div>
           </div>

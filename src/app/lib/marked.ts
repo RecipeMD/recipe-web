@@ -139,8 +139,39 @@ function ingredientRenderer(multiplier: number = 1): RendererObject {
     em({ tokens }: Tokens.Em): string {
       const content = replaceUnicodeFractions(this.parser.parseInline(tokens));
       return `<em>${multiplyAmount(content, multiplier)}</em>`;
+    },
+    listitem(item: Tokens.ListItem): string {
+      let itemBody = '';
+      const checkbox = '<input checked="" type="checkbox" name="' + stripHtml(this.parser.parseInline(item.tokens)) + '">';
+      if (item.loose) {
+        if (item.tokens[0]?.type === 'paragraph') {
+          item.tokens[0].text = checkbox + ' ' + item.tokens[0].text;
+          if (item.tokens[0].tokens && item.tokens[0].tokens.length > 0 && item.tokens[0].tokens[0].type === 'text') {
+            item.tokens[0].tokens[0].text = checkbox + ' ' + escape(item.tokens[0].tokens[0].text);
+            item.tokens[0].tokens[0].escaped = true;
+          }
+        } else {
+          item.tokens.unshift({
+            type: 'text',
+            raw: checkbox + ' ',
+            text: checkbox + ' ',
+            escaped: true,
+          });
+        }
+      } else {
+        itemBody += checkbox + ' ';
+      }
+
+
+      itemBody += this.parser.parse(item.tokens, !!item.loose);
+
+      return `<li><label>${itemBody}</label></li>\n`;
     }
   }
+}
+
+function stripHtml(input: string): string {
+  return input.replaceAll(/<\/?[a-z][a-z0-9]*[^<>]*>|<!--.*?-->/g, '');
 }
 
 export {imageRenderer, linkRenderer, ingredientRenderer, splitAmountList, multiplyAmount, splitAmountUnit};

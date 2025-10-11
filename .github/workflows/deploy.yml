@@ -8,6 +8,8 @@ on:
   repository_dispatch:
     types: [trigger-deploy]
   workflow_dispatch:
+  schedule:
+    - cron: "25 3 */3 * *"
 
 permissions:
   pages: write
@@ -26,7 +28,6 @@ jobs:
       matrix:
         node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-    
 
     steps:
       - uses: actions/checkout@v4

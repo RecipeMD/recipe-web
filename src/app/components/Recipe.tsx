@@ -110,13 +110,15 @@ export default function Recipe({recipe}: Props) {
   }
 
   async function share() {
-    try {
-      navigator.share({
-        title: recipe.title,
-        text: `Recipe Web: ${recipe.description}`,
-        url: location.href,
-      });
-    } catch(e) {
+    const description = recipe.description.trim() || 'sharing recipes with 🍴';
+    const shareData: ShareData = {
+      title: recipe.title,
+      text: `Recipe Web: ${description.length > 50 ? description.slice(0, 50) + '…' : description}`,
+      url: location.href,
+    }
+    if(!!navigator.canShare && navigator.canShare(shareData)) {
+      navigator.share(shareData).catch((e) => console.log(e));
+    } else {
       navigator.clipboard.writeText(location.href);
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 3000);

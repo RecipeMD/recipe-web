@@ -209,6 +209,18 @@
     font-weight: 500;
 }
 
+.share {
+    border: none;
+    background: none;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.share svg {
+    width: 24px;
+    height: 24px;
+}
+
 @media (width <= 768px) {
     .instructions-container {
         flex-direction: column;

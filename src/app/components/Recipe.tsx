@@ -18,6 +18,7 @@ import { useSearchParams, usePathname } from 'next/navigation';
 import { useFavorite } from '../lib/useFavorite';
 import CopySVG from '../svg/fontawesome/copy';
 import { Popover } from 'react-tiny-popover';
+import ShareSVG from '../svg/fontawesome/share';
 
 type Props = {
   recipe: RecipeType;
@@ -42,6 +43,7 @@ export default function Recipe({recipe}: Props) {
 
   const [shopMode, setShopMode] = useState(false);
   const [isCopied, setCopied] = useState(false);
+  const [isShareCopied, setShareCopied] = useState(false);
   const [multiplier, setMultiplier] = useState(queryMultiplier ? parseFloat(queryMultiplier) : 1);
   const [multiplierStr, setMultiplierStr] = useState("" + multiplier);
   const baseYields = useMemo(() => splitAmountList(recipe.yields).map(splitAmount), [recipe]);
@@ -107,6 +109,20 @@ export default function Recipe({recipe}: Props) {
     }
   }
 
+  async function share() {
+    try {
+      navigator.share({
+        title: recipe.title,
+        text: `Recipe Web: ${recipe.description}`,
+        url: location.href,
+      });
+    } catch(e) {
+      navigator.clipboard.writeText(location.href);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 3000);
+    }
+  }
+
   return (
       <div className={styles.layout}>
         <div className={styles.head}>
@@ -116,6 +132,14 @@ export default function Recipe({recipe}: Props) {
               <GithubSVG aria-hidden="true" className={styles.github} />
             </a>
             <button onClick={toggleFavorite} aria-pressed={isFavorite()} title={isFavorite() ? 'Remove favorite' : 'Add favorite'} className={styles.favorite}><HeartSVG filled={isFavorite()} /></button>
+            <Popover
+              isOpen={isShareCopied}
+              content={<div className={styles.copied}>Copied!</div>}
+              positions={['right', 'top', 'bottom', 'left']}
+              padding={10}
+              onClickOutside={() => setShareCopied(false)}>
+              <button onClick={share} title='Share' className={styles.share}><ShareSVG /></button>
+            </Popover>
           </h1>
           <a className={styles.author} href={`/${recipe.meta.author}`}>@{recipe.meta.author}</a>
           <div className={styles.tags}>

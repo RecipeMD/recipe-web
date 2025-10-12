@@ -110,10 +110,9 @@ export default function Recipe({recipe}: Props) {
   }
 
   async function share() {
-    const description = recipe.description.trim() || 'sharing recipes with 🍴';
     const shareData: ShareData = {
       title: recipe.title,
-      text: `Recipe Web: ${description.length > 50 ? description.slice(0, 50) + '…' : description}`,
+      text: `${recipe.title} - Recipe Web`,
       url: location.href,
     }
     if(!!navigator.canShare && navigator.canShare(shareData)) {

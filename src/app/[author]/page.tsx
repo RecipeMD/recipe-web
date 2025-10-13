@@ -12,7 +12,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
     const { author } = await params;
     return {
-      title: `Recipe Web - ${author}`,
+      title: `${author} - Recipe Web`,
     };
 }
 

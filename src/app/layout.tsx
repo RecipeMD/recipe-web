@@ -11,7 +11,7 @@ import { SeedProvider } from "./context/seed";
 
 export const metadata: Metadata = {
   title: "Recipe Web",
-  description: "A web representation of RecipeMD recipes.",
+  description: "A collection of recipes based on RecipeMD.",
 };
 
 export default function RootLayout({

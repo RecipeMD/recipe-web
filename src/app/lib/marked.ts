@@ -166,6 +166,9 @@ function ingredientRenderer(multiplier: number = 1): RendererObject {
       itemBody += this.parser.parse(item.tokens, !!item.loose);
 
       return `<li><label>${itemBody}</label></li>\n`;
+    },
+    paragraph({ tokens }: Tokens.Paragraph): string {
+      return `${this.parser.parseInline(tokens)}\n`;
     }
   }
 }

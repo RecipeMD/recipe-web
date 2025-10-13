@@ -53,7 +53,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
         };
     }
     return {
-      title: `Recipe Web - ${author} - ${parsed.title}`,
+      title: `${parsed.title} - ${author} - Recipe Web`,
+      description: parsed.description || 'A collection of recipes based on RecipeMD.',
     };
 }
 

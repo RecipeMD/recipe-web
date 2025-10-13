@@ -2,7 +2,6 @@
 .recipe {
     display: flex;
     flex-direction: column;
-    gap: 16px;
     font-weight: 500;
     font-size: 1.125rem;
 }
@@ -231,5 +230,9 @@
 @media (width < 560px) {
     .recipe img {
         max-width: 100%;
+    }
+
+    .head {
+        margin-top: 0;
     }
 }

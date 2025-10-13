@@ -53,9 +53,12 @@
   .header-wrapper {
     padding-inline: 16px;
     padding-top: 16px;
-    grid-template-areas: "home search"
-                         "title title";
+    grid-template-areas: "home search";
     grid-template-columns: auto 1fr;
     column-gap: 16px;
+  }
+
+  .title {
+    display: none;
   }
 }

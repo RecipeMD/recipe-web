@@ -151,7 +151,7 @@ export default function Recipe({recipe}: Props) {
         <div className={styles.recipe}>
           <div className={styles.description} dangerouslySetInnerHTML={{__html: description}}></div>
           <div className={styles['instructions-container']}>
-            <div className={styles['yields-and-ingredients']}>
+            {ingredients.length > 0 && (<div className={styles['yields-and-ingredients']}>
               <div className={styles.yields}>
                 {yields.map((value, idx) => {
                   const yieldsItem = splitAmountUnit(value);
@@ -203,9 +203,8 @@ export default function Recipe({recipe}: Props) {
                     {shopMode ? <CopySVG /> : <BasketSVG />}
                   </button>
                 </Popover>
-
               </form>
-            </div>
+            </div>)}
             <div className={styles.instructions} dangerouslySetInnerHTML={{__html: instructions}}></div>
           </div>
         </div>

@@ -52,3 +52,27 @@ em {
   height:1px;
   overflow:hidden;
 }
+
+table {
+    table-layout: fixed;
+    border: 1px solid var(--black);
+    border-radius: 16px;
+    padding: 8px 10px;
+}
+
+td, th {
+    padding-inline: 5px;
+}
+
+td:first-child, th:first-child {
+    padding-inline-start: 0;
+}
+
+td:last-child, th:last-child {
+    padding-inline-end: 0;
+}
+
+th {
+    border-bottom: 1px solid var(--black);
+    padding-bottom: 8px;
+}

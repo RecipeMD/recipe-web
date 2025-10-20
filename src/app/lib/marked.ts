@@ -114,7 +114,7 @@ function multiplyAmount(amount: string, multiplier: number): string {
       const approximateThirds = input.replace(/.33$/, '.333333').replace(/.66$/, '.66667').replace(/.67$/, '.66667');
       const product = new Fraction(approximateThirds).mul(multiplier);
       const decimals = "" + parseFloat(product.valueOf().toFixed(2));
-      return isFrac ? product.toFraction() : (isComma ? decimals.replace(".", ",") : decimals);
+      return isFrac ? product.toFraction(true) : (isComma ? decimals.replace(".", ",") : decimals);
     } catch {
       return input;
     }
@@ -125,15 +125,19 @@ function multiplyAmount(amount: string, multiplier: number): string {
     const left = /[0-9,.\/\s]+/.exec(range[0]);
     const resultLeft = calc(left![0].trim());
 
-    if(range.length > 2) {
-      // second part of range
-      const right = /[0-9,.\/\s]+/.exec(range[2]);
-      const resultRight = calc(right![0].trim());
-      return amount.replace(",", ".").replace(range.join(''), [
-        range[0].replace(left![0].trim(), resultLeft),
-        range[1],
-        range[2].replace(right![0].trim(), resultRight)
-      ].join(''));
+    try {
+      if(range.length > 2) {
+        // second part of range
+        const right = /[0-9,.\/\s]+/.exec(range[2]);
+        const resultRight = calc(right![0].trim());
+        return amount.replace(",", ".").replace(range.join(''), [
+          range[0].replace(left![0].trim(), resultLeft),
+          range[1],
+          range[2].replace(right![0].trim(), resultRight)
+        ].join(''));
+      }
+    } catch(_) {
+      // failsafe for false-positive matches
     }
     return amount.replace(",", ".").replace(left![0].trim(), resultLeft);
   }

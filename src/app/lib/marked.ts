@@ -107,12 +107,11 @@ function splitAmountUnit(amount: string): string[] {
 
 function multiplyAmount(amount: string, multiplier: number): string {
   const isComma = amount.includes(",");
-  const num = /([0-9.,/]+)[-]?([0-9.,/]*)/.exec(amount.replace(",", "."));
+  const isFrac = amount.includes("/");
 
   function calc(input: string): string {
     try {
       const approximateThirds = input.replace(/.33$/, '.333333').replace(/.66$/, '.66667').replace(/.67$/, '.66667');
-      const isFrac = approximateThirds.includes("/");
       const product = new Fraction(approximateThirds).mul(multiplier);
       const decimals = "" + parseFloat(product.valueOf().toFixed(2));
       return isFrac ? product.toFraction() : (isComma ? decimals.replace(".", ",") : decimals);
@@ -120,15 +119,23 @@ function multiplyAmount(amount: string, multiplier: number): string {
       return input;
     }
   }
+  const range = amount.replace(',','.').split(/(-|bis|to)/);
 
-  if(num) {
-    const resultLeft = calc(num[1]);
-    if(num[2] !== "") {
+  if(range.length > 0) {
+    const left = /[0-9,.\/\s]+/.exec(range[0]);
+    const resultLeft = calc(left![0].trim());
+
+    if(range.length > 2) {
       // second part of range
-      const resultRight = calc(num[2]);
-      return amount.replace(",", ".").replace(num[0], `${resultLeft}-${resultRight}`);
+      const right = /[0-9,.\/\s]+/.exec(range[2]);
+      const resultRight = calc(right![0].trim());
+      return amount.replace(",", ".").replace(range.join(''), [
+        range[0].replace(left![0].trim(), resultLeft),
+        range[1],
+        range[2].replace(right![0].trim(), resultRight)
+      ].join(''));
     }
-    return amount.replace(",", ".").replace(num[0], resultLeft);
+    return amount.replace(",", ".").replace(left![0].trim(), resultLeft);
   }
   return amount;
 

@@ -71,7 +71,11 @@ export default function Recipe({recipe}: Props) {
 
     // update search parameter
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set("m", "" + result);
+    if (result === 1) {
+      current.delete('m');
+    } else {
+      current.set("m", "" + result);
+    }
     const param = current.toString();
     const url = `${pathName}${param ? '?' : ""}${param}`;
     window.history.replaceState({...window.history.state, as: url, url}, '', url);

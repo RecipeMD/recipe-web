@@ -136,8 +136,9 @@ function multiplyAmount(amount: string, multiplier: number): string {
           range[2].replace(right![0].trim(), resultRight)
         ].join(''));
       }
-    } catch(_) {
+    } catch(e) {
       // failsafe for false-positive matches
+      console.info(e);
     }
     return amount.replace(",", ".").replace(left![0].trim(), resultLeft);
   }

@@ -154,6 +154,7 @@
         display: block;
         position: absolute;
         right: calc(100% + 0.35em);
+        top: 0;
         height: 1.5em; /* = line-height */
     }
 }

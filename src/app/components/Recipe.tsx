@@ -58,7 +58,7 @@ export default function Recipe({recipe, repos}: Props) {
 
   useEffect(() => {
     setIngredients({renderer: {...ingredientRenderer(multiplier), ...linkRenderer(repos)}});
-  }, [multiplier, setIngredients]);
+  }, [multiplier, repos, setIngredients]);
 
   useEffect(() => {
     setYields(splitAmountList(recipe.yields).map((amnt) => multiplyAmount(amnt, multiplier)));

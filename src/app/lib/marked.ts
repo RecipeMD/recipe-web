@@ -55,7 +55,6 @@ function imageRenderer(root: string): RendererObject {
 
 
 function linkRenderer(repos: Repository[]): RendererObject {
-  const repoMatcher = repos.map(repo => new RegExp(`^https://(github|raw.githubusercontent).com/${repo.author}/${repo.repository}/.*\.md$`, 'g'));
   return {
     link({ href, title, tokens }: Tokens.Link): string {
       const text = this.parser.parseInline(tokens);
@@ -70,6 +69,7 @@ function linkRenderer(repos: Repository[]): RendererObject {
         href = url.href.replace(".md", "");
       }
       // resolve absolute paths (to other repositories)
+      const repoMatcher = repos.map(repo => new RegExp(`^https://(github|raw.githubusercontent).com/${repo.author}/${repo.repository}/.*\.md$`, 'g'));
       const match = repoMatcher.findIndex(prefix => prefix.test(href));
       if(match > -1) {
         href = `/${repos[match].author}/${href.split(`/${repos[match].branch}/`)[1].replace(/.md$/, '')}`;

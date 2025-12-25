@@ -4,7 +4,7 @@ import React, { FormEvent } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import Fraction from 'fraction.js';
 import styles from '@/app/styles/Recipe.module.css'
-import { rawRoot, RecipeType } from '@/app/lib/Recipedata';
+import { rawRoot, RecipeType, Repository } from '@/app/lib/Recipedata';
 import { useMarkdown } from '@/app/lib/useMarkdown';
 import { imageRenderer, ingredientRenderer, linkRenderer, multiplyAmount, splitAmountList, splitAmountUnit } from '@/app/lib/marked';
 
@@ -22,6 +22,7 @@ import ShareSVG from '../svg/fontawesome/share';
 
 type Props = {
   recipe: RecipeType;
+  repos: Repository[];
 };
 
 function splitAmount(amount: string) {
@@ -36,7 +37,7 @@ function formatDecimal(number: number | bigint | string) {
   return Number.parseFloat(new Fraction(number).simplify().valueOf().toFixed(2));
 }
 
-export default function Recipe({recipe}: Props) {
+export default function Recipe({recipe, repos}: Props) {
   const searchParams = useSearchParams();
   const queryMultiplier = searchParams.get("m");
   const pathName = usePathname();
@@ -48,15 +49,15 @@ export default function Recipe({recipe}: Props) {
   const [multiplierStr, setMultiplierStr] = useState("" + multiplier);
   const baseYields = useMemo(() => splitAmountList(recipe.yields).map(splitAmount), [recipe]);
   const [yields, setYields] = useState(splitAmountList(recipe.yields).map((amnt) => multiplyAmount(amnt, multiplier)));
-  const [ingredientsOptions] = useState({renderer: {...ingredientRenderer(multiplier), ...linkRenderer()}});
-  const [description] = useMarkdown(recipe.description, {renderer: {...imageRenderer(rawRoot(recipe)), ...linkRenderer()}});
+  const [ingredientsOptions] = useState({renderer: {...ingredientRenderer(multiplier), ...linkRenderer(repos)}});
+  const [description] = useMarkdown(recipe.description, {renderer: {...imageRenderer(rawRoot(recipe)), ...linkRenderer(repos)}});
   const [ingredients, setIngredients] = useMarkdown(recipe.ingredients, ingredientsOptions);
-  const [instructions] = useMarkdown(recipe.instructions, {renderer: {...imageRenderer(rawRoot(recipe)), ...linkRenderer()}});
+  const [instructions] = useMarkdown(recipe.instructions, {renderer: {...imageRenderer(rawRoot(recipe)), ...linkRenderer(repos)}});
 
   const [isFavorite, toggleFavorite] = useFavorite(recipe.meta.slug);
 
   useEffect(() => {
-    setIngredients({renderer: {...ingredientRenderer(multiplier), ...linkRenderer()}});
+    setIngredients({renderer: {...ingredientRenderer(multiplier), ...linkRenderer(repos)}});
   }, [multiplier, setIngredients]);
 
   useEffect(() => {

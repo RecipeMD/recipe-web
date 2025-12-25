@@ -1,5 +1,6 @@
 import Fraction from "fraction.js";
 import { RendererObject, Tokens } from "marked";
+import { Repository } from "./Recipedata";
 // Override function
 
 // HELPERS FROM https://github.com/markedjs/marked/blob/master/src/helpers.ts
@@ -53,7 +54,8 @@ function imageRenderer(root: string): RendererObject {
 }
 
 
-function linkRenderer(): RendererObject {
+function linkRenderer(repos: Repository[]): RendererObject {
+  const repoMatcher = repos.map(repo => new RegExp(`^https://(github|raw.githubusercontent).com/${repo.author}/${repo.repository}/.*\.md$`, 'g'));
   return {
     link({ href, title, tokens }: Tokens.Link): string {
       const text = this.parser.parseInline(tokens);
@@ -67,7 +69,12 @@ function linkRenderer(): RendererObject {
       if(url.origin === new URL(window.location.href).origin && url.pathname.endsWith(".md")) {
         href = url.href.replace(".md", "");
       }
-      // TODO: resolve absolute paths to other repositories
+      // resolve absolute paths (to other repositories)
+      const match = repoMatcher.findIndex(prefix => prefix.test(href));
+      if(match > -1) {
+        href = `/${repos[match].author}/${href.split(`/${repos[match].branch}/`)[1].replace(/.md$/, '')}`;
+      }
+
       let out = '<a href="' + href + '"';
       if (title) {
         out += ' title="' + (escape(title)) + '"';

@@ -72,7 +72,7 @@ export default async function Page({
 
     return (
         <Suspense>
-            <Recipe recipe={parsed} />
+            <Recipe recipe={parsed} repos={getRepositories()} />
         </Suspense>
     )
 }

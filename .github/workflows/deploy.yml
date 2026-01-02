@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   build:
-    environment: ${{ github.ref == 'refs/heads/master' && 'prod' || 'stage' }}
+    environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stage' }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -53,7 +53,7 @@ jobs:
 
   deploy:
     environment:
-      name: ${{ github.ref == 'refs/heads/master' && 'github-pages' || 'github-pages-stage' }}
+      name: ${{ github.ref == 'refs/heads/main' && 'github-pages' || 'github-pages-stage' }}
       url: ${{ vars.CNAME }}
 
     runs-on: ubuntu-latest

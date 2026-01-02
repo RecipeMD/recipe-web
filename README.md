@@ -2,6 +2,15 @@
 
 Displaying recipes in [RecipeMD format](https://github.com/RecipeMD/RecipeMD) through the magic of Next.js.
 
+## Local Development
+
+1. Clone the repository.
+2. Add a `.env.local` file containing your own recipes repository:
+```
+REPOSITORIES=[{"author":"<GitHub username>","repository":"<repository name>","branch":"<branch>"}]
+```
+3. Run `npm run dev` to start the local development server. The page should be available at `localhost:3001` if the port was not occupied. Changes made in the source code will be displayed automatically.
+
 ## Running your own instance
 
 You can set up your own instance on [GitHub Pages](https://pages.github.com). Just follow these steps:
@@ -18,7 +27,7 @@ You can set up your own instance on [GitHub Pages](https://pages.github.com). Ju
      ```
      [{"author":"<GitHub username>","repository":"<repository name>","branch":"<branch>"}]
      ```
-     You an also add additional objects to the array to show recipes from multiple REPOSITORIES
+     You can also add additional objects to the array to show recipes from multiple REPOSITORIES
 
 4. Enable GitHub Pages in your repository's settings, and run the deploy workflow in the repositories actions.
 

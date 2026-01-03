@@ -92,7 +92,7 @@ function parseRecipe(path: string, content: string, repository: Repository) {
         continue;
       }
       if(token.type === "paragraph") {
-        if(token.tokens && token.tokens.length > 0) {
+        if(token.tokens && token.tokens.length === 1) {
           if(token.tokens[0].type === "em") {
             recipe.tags = token.tokens[0].text.replaceAll(", ", ",").split(",");
             continue;

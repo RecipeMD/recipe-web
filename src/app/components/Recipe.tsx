@@ -6,7 +6,7 @@ import Fraction from 'fraction.js';
 import styles from '@/app/styles/Recipe.module.css'
 import { rawRoot, RecipeType, Repository } from '@/app/lib/Recipedata';
 import { useMarkdown } from '@/app/lib/useMarkdown';
-import { imageRenderer, ingredientRenderer, linkRenderer, multiplyAmount, splitAmountList, splitAmountUnit } from '@/app/lib/marked';
+import { imageRenderer, ingredientRenderer, linkRenderer, multiplyAmount, splitAmountList, splitAmountUnit, stripParagraphs } from '@/app/lib/marked';
 
 import MinusSVG from '@/app/svg/fontawesome/minus';
 import PlusSVG from '@/app/svg/fontawesome/plus';
@@ -54,6 +54,7 @@ export default function Recipe({recipe, repos}: Props) {
   const [description] = useMarkdown(recipe.description, {renderer: {...imageRenderer(rawRoot(recipe)), ...linkRenderer(repos)}});
   const [ingredients, setIngredients] = useMarkdown(recipe.ingredients, ingredientsOptions);
   const [instructions] = useMarkdown(recipe.instructions, {renderer: {...imageRenderer(rawRoot(recipe)), ...linkRenderer(repos)}});
+  const [title] = useMarkdown(recipe.title, {renderer: stripParagraphs()});
 
   const [isFavorite, toggleFavorite] = useFavorite(recipe.meta.slug);
 
@@ -135,7 +136,7 @@ export default function Recipe({recipe, repos}: Props) {
         <div className={styles.head}>
           <h1>
             <a href={`https://github.com/${recipe.meta.author}/${recipe.meta.repository}/blob/${recipe.meta.branch}/${recipe.meta.path}`} target='_blank' rel='noreferrer'>
-              {recipe.title}
+              <span dangerouslySetInnerHTML={{__html: title}}></span>
               <GithubSVG aria-hidden="true" className={styles.github} />
             </a>
             <button onClick={toggleFavorite} aria-pressed={isFavorite()} title={isFavorite() ? 'Remove favorite' : 'Add favorite'} className={styles.favorite}><HeartSVG filled={isFavorite()} /></button>

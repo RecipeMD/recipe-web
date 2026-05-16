@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Fuse from 'fuse.js';
+import { Marked } from 'marked';
 
 import styles from '@/app/styles/Home.module.css';
 import { RecipeList, RecipeType, Repository } from '@/app/lib/Recipedata';
@@ -17,6 +18,7 @@ import { monthTagged, isMonth, humanizeMonth } from '../lib/calendar';
 import { createHash } from 'crypto';
 import { useSeedContext } from '../context/seed';
 import { useDebounce } from '../lib/useDebounce';
+import { stripParagraphs } from '../lib/marked';
 import ImageFallback from './ImageFallback';
 
 type Props = {
@@ -53,6 +55,8 @@ export default function List({recipes, repo}: Props) {
   function setSortedRecipes(r: RecipeType[]) {
     setSortedRecipesInternal(r.toSorted((a, b) => (b.score - a.score)));
   }
+
+  const md = new Marked({renderer: stripParagraphs()});
 
   useEffect(() => {
     if(!recipes) {
@@ -110,9 +114,7 @@ export default function List({recipes, repo}: Props) {
               {isFavorite(recipe.meta.slug) && <div className={styles.favorite}><HeartSVG /></div>}
               <div className={styles.author}>@{recipe.meta.author}</div>
               <div className={styles['card-content']}>
-                <h3 className={styles.title}>
-                  {recipe.title}
-                </h3>
+                <h3 className={styles.title} dangerouslySetInnerHTML={{__html: md.parse(recipe.title)}}></h3>
                 <div className={styles.calendar}>
                     {[0,1,2,3,4,5,6,7,8,9,10,11].map((month) => {
                         return (monthTagged(recipe.tags, month) ? <div className={styles.month} key={`${recipe.meta.slug}-month-${month}`} title={humanizeMonth(month, recipe.language)}></div> : <div key={`${recipe.meta.slug}-month-${month}`}></div>);

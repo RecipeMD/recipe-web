@@ -192,8 +192,16 @@ function ingredientRenderer(multiplier: number = 1): RendererObject {
   }
 }
 
+function stripParagraphs(): RendererObject {
+    return {
+        paragraph({ tokens }: Tokens.Paragraph): string {
+          return `${this.parser.parseInline(tokens)}\n`;
+        }
+    }
+}
+
 function stripHtml(input: string): string {
   return input.replaceAll(/<\/?[a-z][a-z0-9]*[^<>]*>|<!--.*?-->/g, '');
 }
 
-export {imageRenderer, linkRenderer, ingredientRenderer, splitAmountList, multiplyAmount, splitAmountUnit};
+export {imageRenderer, linkRenderer, ingredientRenderer, splitAmountList, multiplyAmount, splitAmountUnit, stripParagraphs};

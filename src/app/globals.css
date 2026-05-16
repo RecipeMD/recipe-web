@@ -90,3 +90,7 @@ th {
     border-bottom: 1px solid var(--black);
     padding-bottom: 8px;
 }
+
+del {
+    text-decoration-thickness: 0.125em;
+}

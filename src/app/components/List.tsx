@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Fuse from 'fuse.js';
@@ -16,6 +16,7 @@ import { useFavorites } from '../lib/useFavorite';
 import { monthTagged, isMonth, humanizeMonth } from '../lib/calendar';
 import { createHash } from 'crypto';
 import { useSeedContext } from '../context/seed';
+import { useDebounce } from '../lib/useDebounce';
 import ImageFallback from './ImageFallback';
 
 type Props = {
@@ -34,7 +35,7 @@ export default function List({recipes, repo}: Props) {
 
   const query = useSearchParams();
   const [searchSlow] = useSearchContext();
-  const search = useDeferredValue(searchSlow);
+  const search = useDebounce(searchSlow, 250);
 
   const [isFavorite] = useFavorites();
   const [seed] = useSeedContext();
@@ -69,6 +70,9 @@ export default function List({recipes, repo}: Props) {
       ],
       threshold: 0.4,
       includeScore: true,
+      ignoreDiacritics: true,
+      ignoreLocation: true,
+      ignoreFieldNorm: true,
     });
     if(search !== "") {
       setSortedRecipes(fuse.search(search).map((result) => ({...result.item, score: -Math.log10(result.score ?? 1)})).toSorted((a, b) => (b.score + (isFavorite(b.meta.slug) ? FAVORITE_FACTOR : 0)) - (a.score + (isFavorite(a.meta.slug) ? FAVORITE_FACTOR : 0))));
@@ -99,7 +103,7 @@ export default function List({recipes, repo}: Props) {
       <div className={styles.cardbox}>
         {sortedRecipes.map((recipe) => {
           return (
-            <Link href={`/${recipe.meta.slug}`} key={recipe.meta.slug} className={styles.card} style={{'--rotate': `${Math.random() * 4 - 2}deg`} as React.CSSProperties}>
+            <Link href={`/${recipe.meta.slug}`} key={recipe.meta.slug} className={styles.card} style={{'--rotate': `${recipe.random * 4 - 2}deg`} as React.CSSProperties}>
               <ImageFallback src={recipe.imagePath} className={styles.preview} width={400} height={300} loading='lazy' alt="">
                 <div className={styles['no-preview']}><FoodSVG /></div>
               </ImageFallback>

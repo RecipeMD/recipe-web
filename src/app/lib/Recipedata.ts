@@ -19,6 +19,7 @@ type RecipeType = {
   instructions: string;
   language: string;
   score: number;
+  random: number;
 };
 
 type RecipeMeta = Repository & {
@@ -57,6 +58,14 @@ function getRepositories(): Repository[] {
   return repositorySchema.parse(repos);
 }
 
+function nHash(input: string): number {
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+        hash += input.charCodeAt(i);
+    }
+    return (hash % 100) / 100;
+}
+
 function parseRecipe(path: string, content: string, repository: Repository) {
 
   const recipe: RecipeType = {
@@ -74,6 +83,7 @@ function parseRecipe(path: string, content: string, repository: Repository) {
     instructions: "",
     language: "",
     score: 0,
+    random: nHash(path),
   };
 
   let blockCount = 0;

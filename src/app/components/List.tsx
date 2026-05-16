@@ -13,6 +13,7 @@ import GithubSVG from '@/app/svg/github';
 import HeartSVG from '../svg/fontawesome/heart';
 import { useSearchContext } from '@/app/context/search';
 import { useFavorites } from '../lib/useFavorite';
+import { monthTagged, isMonth, humanizeMonth } from '../lib/calendar';
 import { createHash } from 'crypto';
 import { useSeedContext } from '../context/seed';
 import ImageFallback from './ImageFallback';
@@ -108,8 +109,13 @@ export default function List({recipes, repo}: Props) {
                 <h3 className={styles.title}>
                   {recipe.title}
                 </h3>
+                <div className={styles.calendar}>
+                    {[0,1,2,3,4,5,6,7,8,9,10,11].map((month) => {
+                        return (monthTagged(recipe.tags, month) ? <div className={styles.month} key={`${recipe.meta.slug}-month-${month}`} title={humanizeMonth(month, recipe.language)}></div> : <div key={`${recipe.meta.slug}-month-${month}`}></div>);
+                    })}
+                </div>
                 <div className={styles.tags}>
-                  {recipe.tags.join(", ")}
+                  {recipe.tags.filter(t => !isMonth(t)).join(", ")}
                 </div>
               </div>
             </Link>

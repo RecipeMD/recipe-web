@@ -1,8 +1,10 @@
-
 .cardbox {
+    /* :root is not allowed */
+    --card-min-height: 112px;
+    --grid-gap: 16px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
+    gap: var(--grid-gap);
     padding-block: 20px;
 }
 
@@ -10,7 +12,7 @@
     --radius: 16px;
     position: relative;
     display: inline-flex;
-    min-height: 96px;
+    min-height: var(--card-min-height);
 
     flex-direction: column;
     justify-content: space-between;
@@ -22,15 +24,22 @@
 
     text-decoration: none;
     transition: transform 300ms;
+
+    &:has(> .preview) {
+        grid-row: span 2;
+    }
 }
 
-.card:hover, .card:focus-visible {
+@media (hover: hover) {
+    .card:hover {
+        transform: scale(1.05) rotate(var(--rotate, 2deg));
+        z-index: 10;
+    }
+}
+
+.card:focus-visible {
     transform: scale(1.05) rotate(var(--rotate, 2deg));
     z-index: 10;
-
-    & .author {
-        opacity: 1;
-    }
 }
 
 .card-content {
@@ -38,7 +47,7 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 16px;
-    flex-grow: 1;
+    flex-grow: 0;
 }
 
 .title {
@@ -56,7 +65,7 @@
     right: 0;
     top: 0;
     padding-inline: 10px;
-    height: 40px;
+    height: 32px;
     background: white;
     display: flex;
     align-items: center;
@@ -66,19 +75,66 @@
     border-top-right-radius: var(--radius);
     border-left: 1px solid var(--black);
     border-bottom: 1px solid var(--black);
-    opacity: 0;
-    transition: opacity 300ms;
 
     font-weight: 700;
     color: var(--gray);
     padding-bottom: 3px;
 }
 
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    height: 4px;
+    width: 100%;
+    margin-block: 2px;
+}
+
+.month {
+    height: 4px;
+    width: 100%;
+    &:nth-child(1) {
+        background-color: var(--january);
+    }
+    &:nth-child(2) {
+        background-color: var(--february);
+    }
+    &:nth-child(3) {
+        background-color: var(--march);
+    }
+    &:nth-child(4) {
+        background-color: var(--april);
+    }
+    &:nth-child(5) {
+        background-color: var(--may);
+    }
+    &:nth-child(6) {
+        background-color: var(--june);
+    }
+    &:nth-child(7) {
+        background-color: var(--july);
+    }
+    &:nth-child(8) {
+        background-color: var(--august);
+    }
+    &:nth-child(9) {
+        background-color: var(--september);
+    }
+    &:nth-child(10) {
+        background-color: var(--october);
+    }
+    &:nth-child(11) {
+        background-color: var(--november);
+    }
+    &:nth-child(12) {
+        background-color: var(--december);
+    }
+}
+
 .preview {
-    aspect-ratio: 16/9;
     object-fit: cover;
     width: 100%;
     height: auto;
+    max-height: calc(1.5 * var(--card-min-height) + var(--grid-gap));
     border-top-left-radius: calc(var(--radius) - 1px);
     border-top-right-radius: calc(var(--radius) - 1px);
 }
@@ -86,15 +142,20 @@
 .no-preview {
     width: 100%;
     height: auto;
-    aspect-ratio: 16/9;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-grow: 1;
 
     & svg {
-        width: 60px;
-        height: 60px;
-        color: var(--gray);
+        width: 40px;
+        height: 40px;
+        color: transparent;
+        /* color: var(--gray); */
+    }
+
+    & ~ .card-content {
+        padding-top: 0;
     }
 }
 
@@ -112,8 +173,8 @@
     position: absolute;
     left: 0;
     top: 0;
-    padding-inline: 10px;
-    height: 40px;
+    padding-inline: 8px;
+    height: 32px;
     background: white;
     display: flex;
     align-items: center;
@@ -130,7 +191,7 @@
     transform: translate(-1.3px, -1.3px);
 
     & svg {
-        width: 24px;
+        width: 20px;
     }
 }
 

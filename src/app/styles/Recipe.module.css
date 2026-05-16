@@ -25,6 +25,43 @@
     border-radius: 4px;
 }
 
+.january {
+    background-color: lch(from var(--january) calc(l + 50) c h);
+}
+.february {
+    background-color: lch(from var(--february) calc(l + 10) c h);
+}
+.march {
+    background-color: lch(from var(--march) calc(l + 50) c h);
+}
+.april {
+    background-color: lch(from var(--april) calc(l + 50) c h);
+}
+.may {
+    background-color: lch(from var(--may) calc(l + 50) c h);
+}
+.june {
+    background-color: lch(from var(--june) calc(l + 50) c h);
+}
+.july {
+    background-color: lch(from var(--july) calc(l + 50) c h);
+}
+.august {
+    background-color: lch(from var(--august) calc(l + 50) c h);
+}
+.september {
+    background-color: lch(from var(--september) calc(l + 50) c h);
+}
+.october {
+    background-color: lch(from var(--october) calc(l + 50) c h);
+}
+.november {
+    background-color: lch(from var(--november) calc(l + 50) c h);
+}
+.december {
+    background-color: lch(from var(--december) calc(l + 50) c h);
+}
+
 .flag {
     height: calc(1.5em + 4px);
 }

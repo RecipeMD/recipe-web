@@ -16,6 +16,7 @@ import BasketSVG from '../svg/fontawesome/basket';
 import Flag from '@/app/svg/Flag';
 import { useSearchParams, usePathname } from 'next/navigation';
 import { useFavorite } from '../lib/useFavorite';
+import { matchMonth } from '../lib/calendar';
 import CopySVG from '../svg/fontawesome/copy';
 import { Popover } from 'react-tiny-popover';
 import ShareSVG from '../svg/fontawesome/share';
@@ -149,7 +150,7 @@ export default function Recipe({recipe, repos}: Props) {
           </h1>
           <a className={styles.author} href={`/${recipe.meta.author}`}>@{recipe.meta.author}</a>
           <div className={styles.tags}>
-            {recipe.tags.map((tag, idx) => (<a href={`/?tag=${tag}`} key={idx} className={styles.tag}>{tag}</a>))}
+            {recipe.tags.map((tag, idx) => (<a href={`/?tag=${tag}`} key={idx} className={[styles.tag, styles[matchMonth(tag)]].join(" ").trim()}>{tag}</a>))}
             <div className={styles.flag}><Flag code={recipe.language} /></div>
           </div>
         </div>

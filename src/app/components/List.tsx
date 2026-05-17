@@ -67,7 +67,7 @@ export default function List({recipes, repo}: Props) {
       keys: [
         {name: 'title', weight: 10},
         {name: 'tags', weight: 5},
-        'author',
+        'meta.author',
         'description',
         'ingredients',
         'instructions'
@@ -79,7 +79,19 @@ export default function List({recipes, repo}: Props) {
       ignoreFieldNorm: true,
     });
     if(search !== "") {
-      setSortedRecipes(fuse.search(search).map((result) => ({...result.item, score: -Math.log10(result.score ?? 1)})).toSorted((a, b) => (b.score + (isFavorite(b.meta.slug) ? FAVORITE_FACTOR : 0)) - (a.score + (isFavorite(a.meta.slug) ? FAVORITE_FACTOR : 0))));
+      const author = search.match(/(?<=@)\S+/g);
+      let result;
+      if(author !== null && author.length === 1) {
+        const remainder = search.replace(`@${author[0]}`, "").trim();
+        if (remainder === "") {
+          result = fuse.search({ 'meta.author': author[0] });
+        } else {
+          result = fuse.search({ $and: [{ 'meta.author': author[0] }, remainder] });
+        }
+      } else {
+        result = fuse.search(search);
+      }
+      setSortedRecipes(result.map((result) => ({...result.item, score: -Math.log10(result.score ?? 1)})).toSorted((a, b) => (b.score + (isFavorite(b.meta.slug) ? FAVORITE_FACTOR : 0)) - (a.score + (isFavorite(a.meta.slug) ? FAVORITE_FACTOR : 0))));
     } else {
       setSortedRecipes(shuffleArray(recipesPrefiltered, seed));
     }

@@ -6,7 +6,7 @@ import Fraction from 'fraction.js';
 import styles from '@/app/styles/Recipe.module.css'
 import { rawRoot, RecipeType, Repository } from '@/app/lib/Recipedata';
 import { useMarkdown } from '@/app/lib/useMarkdown';
-import { imageRenderer, ingredientRenderer, linkRenderer, multiplyAmount, splitAmountList, splitAmountUnit, stripParagraphs } from '@/app/lib/marked';
+import { imageRenderer, ingredientRenderer, linkRenderer, multiplyAmount, splitAmountList, splitAmountUnit, stripParagraphs, temperatureRenderer } from '@/app/lib/marked';
 
 import MinusSVG from '@/app/svg/fontawesome/minus';
 import PlusSVG from '@/app/svg/fontawesome/plus';
@@ -38,7 +38,7 @@ function formatDecimal(number: number | bigint | string) {
   return Number.parseFloat(new Fraction(number).simplify().valueOf().toFixed(2));
 }
 
-export default function Recipe({recipe, repos}: Props) {
+export default function Recipe({ recipe, repos }: Props) {
   const searchParams = useSearchParams();
   const queryMultiplier = searchParams.get("m");
   const pathName = usePathname();
@@ -50,16 +50,16 @@ export default function Recipe({recipe, repos}: Props) {
   const [multiplierStr, setMultiplierStr] = useState("" + multiplier);
   const baseYields = useMemo(() => splitAmountList(recipe.yields).map(splitAmount), [recipe]);
   const [yields, setYields] = useState(splitAmountList(recipe.yields).map((amnt) => multiplyAmount(amnt, multiplier)));
-  const [ingredientsOptions] = useState({renderer: {...ingredientRenderer(multiplier), ...linkRenderer(repos)}});
-  const [description] = useMarkdown(recipe.description, {renderer: {...imageRenderer(rawRoot(recipe)), ...linkRenderer(repos)}});
+  const [ingredientsOptions] = useState({ renderer: { ...ingredientRenderer(multiplier), ...linkRenderer(repos) } });
+  const [description] = useMarkdown(recipe.description, { renderer: { ...imageRenderer(rawRoot(recipe)), ...linkRenderer(repos), ...temperatureRenderer() } });
   const [ingredients, setIngredients] = useMarkdown(recipe.ingredients, ingredientsOptions);
-  const [instructions] = useMarkdown(recipe.instructions, {renderer: {...imageRenderer(rawRoot(recipe)), ...linkRenderer(repos)}});
-  const [title] = useMarkdown(recipe.title, {renderer: stripParagraphs()});
+  const [instructions] = useMarkdown(recipe.instructions, { renderer: { ...imageRenderer(rawRoot(recipe)), ...linkRenderer(repos), ...temperatureRenderer() } });
+  const [title] = useMarkdown(recipe.title, { renderer: stripParagraphs() });
 
   const [isFavorite, toggleFavorite] = useFavorite(recipe.meta.slug);
 
   useEffect(() => {
-    setIngredients({renderer: {...ingredientRenderer(multiplier), ...linkRenderer(repos)}});
+    setIngredients({ renderer: { ...ingredientRenderer(multiplier), ...linkRenderer(repos) } });
   }, [multiplier, repos, setIngredients]);
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export default function Recipe({recipe, repos}: Props) {
     }
     const param = current.toString();
     const url = `${pathName}${param ? '?' : ""}${param}`;
-    window.history.replaceState({...window.history.state, as: url, url}, '', url);
+    window.history.replaceState({ ...window.history.state, as: url, url }, '', url);
   }
 
   function increaseMultiplier(divisor: number = 1) {
@@ -122,7 +122,7 @@ export default function Recipe({recipe, repos}: Props) {
       text: `${recipe.title} - Recipe Web`,
       url: location.href,
     }
-    if(!!navigator.canShare && navigator.canShare(shareData)) {
+    if (!!navigator.canShare && navigator.canShare(shareData)) {
       navigator.share(shareData).catch((e) => console.log(e));
     } else {
       navigator.clipboard.writeText(location.href);
@@ -132,89 +132,89 @@ export default function Recipe({recipe, repos}: Props) {
   }
 
   return (
-      <div className={styles.layout}>
-        <div className={styles.head}>
-          <h1>
-            <a href={`https://github.com/${recipe.meta.author}/${recipe.meta.repository}/blob/${recipe.meta.branch}/${recipe.meta.path}`} target='_blank' rel='noreferrer'>
-              <span dangerouslySetInnerHTML={{__html: title}}></span>
-              <GithubSVG aria-hidden="true" className={styles.github} />
-            </a>
-            <button onClick={toggleFavorite} aria-pressed={isFavorite()} title={isFavorite() ? 'Remove favorite' : 'Add favorite'} className={styles.favorite}><HeartSVG filled={isFavorite()} /></button>
-            <Popover
-              isOpen={isShareCopied}
-              content={<div className={styles.copied}>Copied!</div>}
-              positions={['right', 'top', 'bottom', 'left']}
-              padding={10}
-              onClickOutside={() => setShareCopied(false)}>
-              <button onClick={share} title='Share' className={styles.share}><ShareSVG /></button>
-            </Popover>
-          </h1>
-          <a className={styles.author} href={`/${recipe.meta.author}`}>@{recipe.meta.author}</a>
-          <div className={styles.tags}>
-            {recipe.tags.map((tag, idx) => (<a href={`/?tag=${tag}`} key={idx} className={[styles.tag, styles[matchMonth(tag)]].join(" ").trim()}>{tag}</a>))}
-            <div className={styles.flag}><Flag code={recipe.language} /></div>
-          </div>
-        </div>
-        <div className={styles.recipe}>
-          <div className={styles.description} dangerouslySetInnerHTML={{__html: description}}></div>
-          <div className={styles['instructions-container']}>
-            {ingredients.length > 0 && (<div className={styles['yields-and-ingredients']}>
-              <div className={styles.yields}>
-                {yields.map((value, idx) => {
-                  const yieldsItem = splitAmountUnit(value);
-
-                  const amounts = yieldsItem[0].split("-").map(item => {
-                    try {
-                      return formatDecimal(item);
-                    } catch {
-                      // yield can not be interpreted as number, assume 1 and add the yield as string, currently this fallback does not scale
-                      if (yieldsItem.length === 1) {
-                        yieldsItem.push(item);
-                        yieldsItem[0] = "1";
-                        return 1;
-                      }
-                      return item
-                    }
-                  });
-                  return (
-                    <div key={idx}>
-                      <button className={styles['yields-btn']} onClick={() => decreaseMultiplier(baseYields[idx])}><MinusSVG /></button>
-                      <label className={styles['yields-label']}>
-                        <input type='number' className={styles['yields-input']} onChange={(event) => adjustMultiplier(event.target.value, baseYields[idx])} value={amounts[0]} />
-                        <span>{amounts.length > 1 && ` - ${amounts[1]}`}{yieldsItem.length > 1 && ` ${yieldsItem[1]}`}</span>
-                      </label>
-                      <button className={styles['yields-btn']} onClick={() => increaseMultiplier(baseYields[idx])}><PlusSVG /></button>
-                    </div>
-                  );
-                })}
-                {baseYields.includes(1) || (
-                  <div>
-                    <button className={styles['yields-btn']} onClick={() => decreaseMultiplier()}><MinusSVG /></button>
-                    <label className={styles['yields-label']}>
-                      <input type='number' className={styles['yields-input']} onChange={(event) => adjustMultiplier(event.target.value)} value={multiplierStr} />
-                      <span> (Multiplier)</span>
-                    </label>
-                    <button className={styles['yields-btn']} onClick={() => increaseMultiplier()}><PlusSVG /></button>
-                  </div>
-                )}
-              </div>
-              <form className={styles.ingredients} onSubmit={shop}>
-                <div className={shopMode ? styles['ingredients-shop'] : undefined} dangerouslySetInnerHTML={{__html: ingredients}}></div>
-                <Popover
-                  isOpen={isCopied}
-                  content={<div className={styles.copied}>Copied!</div>}
-                  positions={['right', 'top', 'bottom', 'left']}
-                  padding={10}
-                  onClickOutside={() => setCopied(false)}>
-                  <button type="submit" className={styles['shop-button']}>
-                    {shopMode ? <CopySVG /> : <BasketSVG />}
-                  </button>
-                </Popover>
-              </form>
-            </div>)}
-            <div className={styles.instructions} dangerouslySetInnerHTML={{__html: instructions}}></div>
-          </div>
+    <div className={styles.layout}>
+      <div className={styles.head}>
+        <h1>
+          <a href={`https://github.com/${recipe.meta.author}/${recipe.meta.repository}/blob/${recipe.meta.branch}/${recipe.meta.path}`} target='_blank' rel='noreferrer'>
+            <span dangerouslySetInnerHTML={{ __html: title }}></span>
+            <GithubSVG aria-hidden="true" className={styles.github} />
+          </a>
+          <button onClick={toggleFavorite} aria-pressed={isFavorite()} title={isFavorite() ? 'Remove favorite' : 'Add favorite'} className={styles.favorite}><HeartSVG filled={isFavorite()} /></button>
+          <Popover
+            isOpen={isShareCopied}
+            content={<div className={styles.copied}>Copied!</div>}
+            positions={['right', 'top', 'bottom', 'left']}
+            padding={10}
+            onClickOutside={() => setShareCopied(false)}>
+            <button onClick={share} title='Share' className={styles.share}><ShareSVG /></button>
+          </Popover>
+        </h1>
+        <a className={styles.author} href={`/${recipe.meta.author}`}>@{recipe.meta.author}</a>
+        <div className={styles.tags}>
+          {recipe.tags.map((tag, idx) => (<a href={`/?tag=${tag}`} key={idx} className={[styles.tag, styles[matchMonth(tag)]].join(" ").trim()}>{tag}</a>))}
+          <div className={styles.flag}><Flag code={recipe.language} /></div>
         </div>
       </div>
+      <div className={styles.recipe}>
+        <div className={styles.description} dangerouslySetInnerHTML={{ __html: description }}></div>
+        <div className={styles['instructions-container']}>
+          {ingredients.length > 0 && (<div className={styles['yields-and-ingredients']}>
+            <div className={styles.yields}>
+              {yields.map((value, idx) => {
+                const yieldsItem = splitAmountUnit(value);
+
+                const amounts = yieldsItem[0].split("-").map(item => {
+                  try {
+                    return formatDecimal(item);
+                  } catch {
+                    // yield can not be interpreted as number, assume 1 and add the yield as string, currently this fallback does not scale
+                    if (yieldsItem.length === 1) {
+                      yieldsItem.push(item);
+                      yieldsItem[0] = "1";
+                      return 1;
+                    }
+                    return item
+                  }
+                });
+                return (
+                  <div key={idx}>
+                    <button className={styles['yields-btn']} onClick={() => decreaseMultiplier(baseYields[idx])}><MinusSVG /></button>
+                    <label className={styles['yields-label']}>
+                      <input type='number' className={styles['yields-input']} onChange={(event) => adjustMultiplier(event.target.value, baseYields[idx])} value={amounts[0]} />
+                      <span>{amounts.length > 1 && ` - ${amounts[1]}`}{yieldsItem.length > 1 && ` ${yieldsItem[1]}`}</span>
+                    </label>
+                    <button className={styles['yields-btn']} onClick={() => increaseMultiplier(baseYields[idx])}><PlusSVG /></button>
+                  </div>
+                );
+              })}
+              {baseYields.includes(1) || (
+                <div>
+                  <button className={styles['yields-btn']} onClick={() => decreaseMultiplier()}><MinusSVG /></button>
+                  <label className={styles['yields-label']}>
+                    <input type='number' className={styles['yields-input']} onChange={(event) => adjustMultiplier(event.target.value)} value={multiplierStr} />
+                    <span> (Multiplier)</span>
+                  </label>
+                  <button className={styles['yields-btn']} onClick={() => increaseMultiplier()}><PlusSVG /></button>
+                </div>
+              )}
+            </div>
+            <form className={styles.ingredients} onSubmit={shop}>
+              <div className={shopMode ? styles['ingredients-shop'] : undefined} dangerouslySetInnerHTML={{ __html: ingredients }}></div>
+              <Popover
+                isOpen={isCopied}
+                content={<div className={styles.copied}>Copied!</div>}
+                positions={['right', 'top', 'bottom', 'left']}
+                padding={10}
+                onClickOutside={() => setCopied(false)}>
+                <button type="submit" className={styles['shop-button']}>
+                  {shopMode ? <CopySVG /> : <BasketSVG />}
+                </button>
+              </Popover>
+            </form>
+          </div>)}
+          <div className={styles.instructions} dangerouslySetInnerHTML={{ __html: instructions }}></div>
+        </div>
+      </div>
+    </div>
   );
 }

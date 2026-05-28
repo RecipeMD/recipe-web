@@ -94,3 +94,13 @@ th {
 del {
     text-decoration-thickness: 0.125em;
 }
+
+button.temperature {
+    border: none;
+    background: none;
+    text-decoration: dashed underline;
+    text-decoration-thickness: 0.075em;
+    cursor: pointer;
+    padding: 0 0.125em;
+}
+

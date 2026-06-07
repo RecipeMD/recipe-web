@@ -178,7 +178,14 @@ function ingredientRenderer(multiplier: number = 1): RendererObject {
     },
     listitem(item: Tokens.ListItem): string {
       let itemBody = '';
-      const checkbox = '<input checked="" type="checkbox" name="' + stripHtml(this.parser.parseInline(item.tokens)) + '">';
+      let label = '';
+      try {
+        label = stripHtml(this.parser.parse(item.tokens));
+      } catch {
+        /* we should not crash on a faulty label */
+        console.error('could not parse ingredient format');
+      }
+      const checkbox = '<input checked="" type="checkbox" name="' + label + '">';
       if (item.loose) {
         if (item.tokens[0]?.type === 'paragraph') {
           item.tokens[0].text = checkbox + ' ' + item.tokens[0].text;

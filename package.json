@@ -1,7 +1,19 @@
 {
-  "name": "recipe-next",
+  "name": "recipe-web",
+  "description": "Displaying recipes in the web using RecipeMD.",
+  "homepage": "https://github.com/RecipeMD/recipe-web",
+  "keywords": [
+    "recipe",
+    "recipemd"
+  ],
+  "license": "LGPL-3.0",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RecipeMD/recipe-web.git"
+  },
+  "type": "module",
   "scripts": {
     "deploy": "gh-pages -d build",
     "dev": "next dev --turbopack -p 3001",

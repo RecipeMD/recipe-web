@@ -1,5 +1,5 @@
 import React from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import HouseSVG from '@/app/svg/fontawesome/house';
 import styles from '@/app/styles/App.module.css';
@@ -12,6 +12,23 @@ import { SeedProvider } from "./context/seed";
 export const metadata: Metadata = {
   title: "Recipe Web",
   description: "A collection of recipes based on RecipeMD.",
+  appleWebApp: {
+    capable: true,
+    title: 'Recipe Web',
+    statusBarStyle: 'black-translucent',
+    startupImage: '/favicons/android-chrome-512x512.png',
+  },
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/favicons/android-chrome-512x512.png',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#5c7b80',
+  width: 'device-width',
+  initialScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

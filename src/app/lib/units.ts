@@ -27,13 +27,13 @@ export function simplifyUnit(quantity: Fraction, unit: string): { quantity: Frac
     if (q < 1) {
       quantity = quantity.mul(3);
       unit = unit.toLowerCase() === 'el' ? 'TL' : 'tsp';
-    } else if (q >= 8) {
-      quantity = quantity.div(16);
-      if (parseFloat(quantity.valueOf().toFixed(2)) === 1) {
-        unit = unit.toLowerCase() === 'el' ? 'Tasse' : 'cup';
-      } else {
-        unit = unit.toLowerCase() === 'el' ? 'Tassen' : 'cups';
-      }
+      // } else if (q >= 8) {
+      //   quantity = quantity.div(16);
+      //   if (parseFloat(quantity.valueOf().toFixed(2)) === 1) {
+      //     unit = unit.toLowerCase() === 'el' ? 'Tasse' : 'cup';
+      //   } else {
+      //     unit = unit.toLowerCase() === 'el' ? 'Tassen' : 'cups';
+      //   }
     }
   }
 
